@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="scripts/shwdnpokedex.js"></script>
+    <!-- <script src="scripts/Chart.bundle.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.css" />
+    <style>
+        @font-face {                                                                                                /* Inclusion of Fonts, Unused here */
+            font-family: 'typewriter';
+            src: url('fonts/veteran_typewriter-webfont.eot');                                                       /* IE9 Compat Modes */
+            src: url('fonts/veteran_typewriter-webfont.eot?#iefix') format('embedded-opentype'),                    /* IE6-IE8 */
+            url('fonts/veteran_typewriter-webfont.woff') format('woff'),                                            /* Modern Browsers */
+            url('fonts/veteran_typewriter-webfont.woff2')  format('truetype'),                                      /* Safari, Android, iOS */
+            url('fonts/veteran_typewriter-webfont.svg#veterean_typewriter-webfont') format('svg');                  /* Legacy iOS */
+        }
+        html {
+            background-color: rgba(255, 255, 255, 0.75);
+        }
+        body {                                                                                                      /* Adding background images to test for checkbox blur */
+            background-image: url("images/texture-light.jpg");
+            margin-left: 0px;
+            margin-right: 0px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            /* font-family: typewriter; */
+        }
+        table tr#xyfront {
+            text-align: right;
+        }
+        table tr#xyback {
+            text-align: left;
+        }
+        table #headers {
+            font-weight: bold;
+        }
+        input[type=checkbox]:disabled {
+            /* visibility: hidden; */
+            opacity: 0.75
+        }
+        input[type=chechbox] {
+            /* border-color: black; */
+            opacity: 1.0
+        }
+        input[type=number] {
+            width: 5ch;
+        }
+        img {                                                                                                       /* Adding extra padding for stone images in suggestions */
+            padding-right: 3px
+        }
+        select:empty {                                                                                              /* Show it as disabled */
+            opacity: 0.75;
+        }
+        input[type=text] {
+            background-color: rgba(0, 0, 0, 0);
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            border-bottom-color: black;
+            border-bottom-width: 0.1em;
+            transition-property: border-bottom-color;
+            transition-duration: 200ms;
+            transition-timing-function: ease-out
+        }
+        input[type=text]:focus{
+            outline: none;
+            border-bottom-color: orchid;
+            border-bottom-width: 0.15em;  
+        }
+        input:invalid {
+            outline: none;
+            border-bottom-color: red;
+            border-bottom-width: 0.15em;  
+        }
+        progress {
+            -webkit-appearance: none;
+            /* -moz-appearance: none; */
+        }
+         ::-webkit-progress-bar {
+            background-color: rgba(0, 0, 0, 0);
+            
+        }
+        
+        progress[value]::-webkit-progress-value {
+            transition: width 0.5s ease-out;
+            background: orange;
+        }
+        
+        tr.headers {
+            font-weight: bold;
+            text-align: center;
+        }
+        td.headers {
+            font-weight: bold;
+            text-align: right;
+        }
+        .stats {
+            text-align: center;
+        }
+        .netstats {
+            text-align: center;
+        }
+        td#totev {
+
+        }
+        table {
+            padding-left: 5px;
+        }
+        div.req {
+            position: sticky;
+            top: 0px;
+            padding-left: 10px;
+            padding-top: 10px;
+            background-color: rgba(255, 255, 255, 0.75);
+            
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.4.0.js" integrity="sha256-DYZMCC8HTC+QDr5QNaIcfR7VSPtcISykd+6eSmBW5qo=" crossorigin="anonymous"></script>
+    <script src="scripts/pkmnadv.js"></script>
+</head>
+<body onload="starter()">
+    
+    <div class="req">
+        <input type="button" onclick="sender();statcalc();updtr();" value="Get Data" class="buttons">
+        <span id="input">
+            <input type="text" oninput="rankgrader2(this.value);checkforms(this.value)" list="options" id="entry" placeholder="Pokemon Name" autocomplete="off"><!--  pattern="^((?!-[m,M]ega).)*$"> -->
+            <datalist id="options">
+
+            </datalist>
+        </span>
+        <input type="button" onclick="randpoke();" value="Random Pokémon">
+    
+        <span id="forms">
+
+            Forms:
+            <select id="Formselect">
+                
+            </select>
+            <input type="checkbox" value="Mega" class="transf" id="Mega" disabled><label for="Mega">Mega Evolution</label>
+            <input type="checkbox" value="Mega" class="transf" id="Primal" disabled><label for="Primal">Primal Reversion</label>
+            <input type="checkbox" value="Mega" class="transf" id="Ultra" disabled><label for="Ultra">Ultra Burst</label>
+    
+    
+        </span>
+    
+        
+        <input type="button" onclick="statcalc()" value="Calculate Stats" class="buttons">
+        
+        <br>
+        <b>Held Items:</b> 
+        <input type="radio" name="itemmods" value="none" id="itemnone" checked>No Item
+        <input type="radio" name="itemmods" value="band" id="band">Choice Band
+        <input type="radio" name="itemmods" value="specs" id="specs">Choice Specs
+        <input type="radio" name="itemmods" value="scarf" id="scarf">Choice Scarf
+        <input type="radio" name="itemmods" value="lifeorb" id="lifeorb">Life Orb
+        <input type="radio" name="itemmods" value="vest" id="vest">Assault Vest
+        <input type="radio" name="itemmods" value="eviolite" id="eviolite">Eviolite
+        <br>
+        <b>Active Abilities:</b> 
+        <input type="radio" name="ablmods" value="none" id="ablnone" checked>No Ability
+        <input type="radio" name="ablmods" value="power" id="power">Pure Power | Huge Power
+        <input type="radio" name="ablmods" value="solar" id="solar">Solar Power
+        <input type="radio" name="ablmods" value="surfer" id="surfer">Chlorophyll | Swift Swim | Slush Rush | Sand Rush | Surge Surfer
+    
+        <hr>
+        <!-- <input type="button" onclick="document.getElementById('entry').value=dict2[Math.round(Math.random()*dict2.length)].name;rankgrader2(dict2[Math.round(Math.random()*dict2.length)].name);checkforms(dict2[Math.round(Math.random()*dict2.length)].name);sender();" value="Send Random">
+        <br> -->
+    </div>
+    <div id="suggestiontext"></div>
+    <hr>
+    <table id="stats">
+            <tr class="headers">
+                <td></td>
+                <td>Base Stats</td>
+                <td></td>
+                <td>Level</td>
+                <td>IV</td>
+                <td>EV</td>
+                <td>Nature Modifier</td>
+                <td>Stat Modifier</td>
+                <td>In-game Stats</td>
+                <td>Stat Distribution</td>
+            </tr>
+            <tr>
+                <td class="headers">Health: </td>
+                <td class="stats" id="hp"></td>
+                <td><progress value="80" max="255" id="hpbar"></progress></td>
+                <td><input id="hplvl" type="number" min="1" max="100" step="1" value="100" onchange="statcalc()"></td>
+                <td><input id="hpiv" type="number" min="0" max="31" step="1" value="31" onchange="statcalc()"></td>
+                <td><input id="hpev" type="number" min="0" max="252" step="1" value="0" onchange="statcalc()"></td>
+                <td><!-- <input type="text" id="hpnat" value="1.0"> --></td>
+                <td></td>
+                <td id="hpval" class="netstats" onchange="statcalc()"></td>
+                <td rowspan="8">
+                        <div style="width: 20vw; height: 20vw">
+                            <canvas id="myChart" width="100" height="100"></canvas>
+                        </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="headers">Attack: </td>
+                <td class="stats" id="atk"></td>
+                <td><progress value="80" max="255" id="atkbar"></progress></td>
+                <td><input id="atklvl" type="number" min="1" max="100" step="1" value="100" onchange="statcalc()"></td>
+                <td><input id="atkiv" type="number" min="0" max="31" step="1" value="31" onchange="statcalc()"></td>
+                <td><input id="atkev" type="number" min="0" max="252" step="1" value="0" onchange="statcalc()"></td>
+                <td>
+                    <select name="natures" id="atknat" onchange="statcalc()">
+                        <option value="1.1">+</option>
+                        <option value="1.0" selected>Neutral</option>
+                        <option value="0.9">-</option>
+                    </select>
+                </td>
+                <td><input type="number" min="-6" max="6" value="0" id="atkmod" onchange="statcalc()"></td>
+                <td id="atkval" class="netstats"></td>
+            </tr>
+            <tr>
+                <td class="headers">Defense: </td>
+                <td class="stats" id="def"></td>
+                <td><progress value="80" max="255" id="defbar"></progress></td>
+                <td><input id="deflvl" type="number" min="1" max="100" step="1" value="100" onchange="statcalc()"></td>
+                <td><input id="defiv" type="number" min="0" max="31" step="1" value="31" onchange="statcalc()"></td>
+                <td><input id="defev" type="number" min="0" max="252" step="1" value="0" onchange="statcalc()"></td>
+                <td>
+                        <select name="natures" id="defnat" onchange="statcalc()">
+                                <option value="1.1">+</option>
+                                <option value="1.0" selected>Neutral</option>
+                                <option value="0.9">-</option>
+                            </select>
+                </td>
+                <td><input type="number" min="-6" max="6" value="0" id="defmod" onchange="statcalc()"></td>
+                <td id="defval" class="netstats"></td>
+            </tr>
+            <tr>
+                <td class="headers">Spcial Attack: </td>
+                <td class="stats" id="spa"></td>
+                <td><progress value="80" max="255" id="spabar"></progress></td>
+                <td><input id="spalvl" type="number" min="1" max="100" step="1" value="100" onchange="statcalc()"></td>
+                <td><input id="spaiv" type="number" min="0" max="31" step="1" value="31" onchange="statcalc()"></td>
+                <td><input id="spaev" type="number" min="0" max="252" step="1" value="0" onchange="statcalc()"></td>
+                <td>
+                        <select name="natures" id="spanat" onchange="statcalc()">
+                                <option value="1.1">+</option>
+                                <option value="1.0" selected>Neutral</option>
+                                <option value="0.9">-</option>
+                            </select>
+                </td>
+                <td><input type="number" min="-6" max="6" value="0" id="spamod" onchange="statcalc()"></td>
+                <td id="spaval" class="netstats"></td>
+            </tr>
+            <tr>
+                <td class="headers">Special Defense: </td>
+                <td class="stats" id="spd"></td>
+                <td><progress value="80" max="255" id="spdbar"></progress></td>
+                <td><input id="spdlvl" type="number" min="1" max="100" step="1" value="100" onchange="statcalc()"></td>
+                <td><input id="spdiv" type="number" min="0" max="31" step="1" value="31" onchange="statcalc()"></td>
+                <td><input id="spdev" type="number" min="0" max="252" step="1" value="0" onchange="statcalc()"></td>
+                <td>
+                        <select name="natures" id="spdnat" onchange="statcalc()">
+                                <option value="1.1">+</option>
+                                <option value="1.0" selected>Neutral</option>
+                                <option value="0.9">-</option>
+                            </select>
+                </td>
+                <td><input type="number" min="-6" max="6" value="0" id="spdmod" onchange="statcalc()"></td>
+                <td id="spdval" class="netstats"></td>
+            </tr>
+            <tr>
+                <td class="headers">Speed: </td>
+                <td class="stats" id="spe"></td>
+                <td><progress value="80" max="255" id="spebar"></progress></td>
+                <td><input id="spelvl" type="number" min="1" max="100" step="1" value="100" onchange="statcalc()"></td>
+                <td><input id="speiv" type="number" min="0" max="31" step="1" value="31" onchange="statcalc()"></td>
+                <td><input id="speev" type="number" min="0" max="252" step="1" value="0" onchange="statcalc()"></td>
+                <td><select name="natures" id="spenat" onchange="statcalc()">
+                        <option value="1.1">+</option>
+                        <option value="1.0" selected>Neutral</option>
+                        <option value="0.9">-</option>
+                    </select></td>
+                <td><input type="number" min="-6" max="6" value="0" id="spemod" onchange="statcalc()"></td>
+                <td id="speval" class="netstats"></td>
+            </tr>
+            <tr>
+                <td class="headers">Total</td>
+                <td class="stats" id="tot"></td>
+                <td><progress value="80" max="1530" id="totbar"></progress></td>
+                <td><input id="totlvl" type="number" min="1" max="100" step="1" value="100" onchange="synclvls();statcalc()"></td>
+                <td><input id="totiv" type="number" min="1" max="31" step="1" value="31" onchange="syncivs();statcalc()"></td>
+                <td id="totev"></td>
+                <td id="natname"></td>
+                <td><input type="number" min="-6" max="6" value="0" id="totmod" onchange="syncmods();statcalc()"></td>
+                <td></td>
+            </tr>
+    </table>
+    <br>
+    <b>Sprites:</b><br>
+    <table id="sprites">
+        <tr class="headers">
+            <td>Normal Coloration<br></td>
+            <td>Shiny Coloration<br></td>
+        </tr>
+        <tr id="xyfront">
+            <td><span id="xyani-front"></span></td>
+            <td><span id="xyani-front-shiny"></span></td>
+        </tr>
+        <tr id="xyback">
+            <td><span id="xyani-back"></span></td>
+            <td><span id="xyani-back-shiny"></span></td>
+        </tr>
+    </table>
+    Then the LORD God among the trees of every kind on earth that bear fruit with the seed in it. And it was so. The LORD God took the man called every living creature, that was its name. And to the man said, This at last is bone of my bones and flesh of my flesh; this one was taken. So when the woman saw that the light was good; and God said to the woman, You will not die. And let them have dominion over the fish of the second river is Gihon; it is the one that flows around the whole land of Cush. But of the tree of life. God made the wild animals of the earth. For God knows that when you eat of it you shall die. Then God said, Let the earth when they were created. In the day that you eat of it all the wild animals of the sea and over the night, and to separate the light from the waters that were under the dome of the field; but for the man and for his wife, and clothed them. And the tree of the knowledge of good and evil. So when the woman he said, Because you have listened to the man he said, Because you have listened to the voice of your wife, and clothed them.
+God said, Let us make humankind in our image, according to our likeness; and let them have dominion over the fish of the sea and over the cattle, and over every creeping thing that moves upon the earth. Therefore the LORD God said, See, I have given every green plant for food. These are the generations of the deep, while a wind from God swept over the face of all the earth. They heard the sound of you in the earth and no herb of the garden, and I was afraid, because I was naked; and they sewed fig leaves together and made loincloths for themselves. The woman said to him, Where are you? Then the LORD God commanded the man, You may freely eat of the fruit of the tree that is pleasant to the woman, What is this that you eat of it all the days of your wife, and clothed them. When no plant of the field was yet in the garden at the time of the garden, nor shall you touch it, or you shall die. The earth brought forth vegetation: plants yielding seed, and fruit trees of every kind bearing fruit with the seed in it. And it was very good. And there was evening and there was light.
+The name of the waters, and let it separate the light from the darkness. God blessed them, and God said to them, Be fruitful and multiply, and fill the earth across the dome of the sky to separate the day that the LORD God walking in the garden at the time of the evening breeze, and the man called every living creature, that was its name. But God said, 'You shall not eat, for in the dome of the sky to separate the day and over the night, and to separate the light from the darkness. Then the LORD God said, It is not good that the man and for seasons and for days and years. For God knows that when you eat of it you shall die. So when the woman he said, Because you have done this, cursed are you among all animals and among all animals and among all animals and among all animals and among all animals and among all wild creatures; upon your belly you shall go, and dust you shall bring forth living creatures of every kind bearing fruit with the seed in it. And it was so. Therefore the LORD God had made. He said to the birds of the air, and to the birds of the garden, and from there it divides and becomes four branches.
+These are the generations of the trees in the garden. So God created the heavens and the earth of every kind on earth that bear fruit with the seed in it. And God saw that the light was good; and God separated the light was good; and God separated the light from the darkness. And on the seventh day God finished the work that he had done, and he rested on the seventh day from all the work that he had done in creation. And the lesser light to rule the night - and the stars. God blessed them, saying, Be fruitful and multiply and fill the waters in the garden at the time of the tree about which I commanded you, 'You shall not eat from any tree in the garden'? Therefore the LORD God planted a garden in Eden, in the east; and there he put the man and put him in the garden at the east of Assyria. And the fourth river is Tigris, which flows east of Assyria. And the man and for his wife, and clothed them. Therefore the LORD God took the man and put him in the image of God he created them; male and female he created them.
+Then God said, Let there be a dome in the dome of the sky to give light upon the earth. In the day that the LORD God sent him forth from the tree, and I ate. And the rib that the LORD God had not caused it to rain upon the earth. The woman whom you gave to be with me, she gave me fruit from the tree, and I was afraid, because I was naked; and I was afraid, because I was naked; and I hid myself. And let them have dominion over the fish of the air and over every living thing that moves upon the face of all the days of your life. For God knows that when you eat of the fruit of the second river is Gihon; it is the one that flows around the whole land of Havilah, where there is gold. In the beginning when God created humankind in his image, in the day that the LORD God planted a garden in Eden, in the day that the LORD God sent him forth from the waters that were above the dome. And it was so. Then the LORD God formed man from the darkness. And God saw everything that creeps upon the ground of every tree of the garden.
+When no plant of the field and every living creature that moves, of every kind bearing fruit with the seed in it. And God said, Let the waters bring forth swarms of living creatures, and let the dry land appear. And it was so. God called the light was good; and God said to the serpent, We may eat of it you were taken; you are dust, and to dust you shall eat all the days of your wife, and they become one flesh. God set them in the dome Sky. And there was morning, the first day. God set them in the dome Sky. And there was no one to till the ground the LORD God planted a garden in Eden, in the earth and no herb of the field had yet sprung up - for the LORD God made garments of skins for the man there was not found a helper as his partner. They heard the sound of the sea, and over the face of the deep, while a wind from God swept over the fish of the sea and over the night, and to every bird of the garden, nor shall you touch it, or you shall die.
+I will greatly increase your pangs in childbearing; in pain you shall eat all the days of your wife, and clothed them. And to every beast of the sea and over the fish of the sea, and over the night, and to the birds of the evening breeze, and the waters that were under the dome of the earth of every kind, and everything that creeps on the earth, everything that has the breath of life; and the woman, and between your offspring and hers; he will strike his heel. When no plant of the field was yet in the dome of the sky to separate the day and over the cattle, and over every creeping thing that moves upon the earth. So God made the two great lights - the greater light to rule the night - and the woman, and between your offspring and hers; he will strike his heel. By the sweat of your face you shall have them for food. And the LORD God made garments of skins for the man and put him in the seas, and let birds fly above the earth across the dome of the sky. In the day that you eat of it all the wild animals of the tree about which I commanded you, 'You shall not eat of the ground the LORD God formed man from the garden of Eden to water the garden, and from there it divides and becomes four branches.
+And God said, Let the earth across the dome of the sky to separate the day from the waters that were above the dome. And it was so. These are the generations of the earth, and every tree that is pleasant to the sight and good for food, and that the tree about which I commanded you not to eat? To the woman he said, I will greatly increase your pangs in childbearing; in pain you shall bring forth for you; and you shall have them for food. And God said, Let the waters under the dome from the waters in the garden, and from there it divides and becomes four branches. God said, It is not good that the LORD God said to the serpent, Because you have done this, cursed are you among all wild creatures; upon your belly you shall go, and dust you shall eat the plants of the field. Therefore the LORD God planted a garden in Eden, in the east; and there was no one to till the ground from which he was taken. Then the LORD God planted a garden in Eden, in the east; and there he put the man became a living being.
+But God said, 'You shall not eat from any tree in the garden, and the tree was to be desired to make one wise, she took of its fruit and ate; and she also gave some to her husband, who was with her, and he ate. Thorns and thistles it shall bring forth for you; and you shall have them for food. Then God said, Let us make humankind in his image, in the image of God he created them; male and female he created them. I will put enmity between you and the gold of that land is good; bdellium and onyx stone are there. And to every beast of the fruit of the tree that is upon the face of all the wild animals of the second river is Gihon; it is the one that flows around the whole land of Havilah, where there is gold. God called the light was good; and God separated the waters that were under the dome and separated the waters swarm, and every winged bird of every kind. And God said, Let the earth and subdue it; and have dominion over the birds of the air and over the night, and to the birds of the sky to give light upon the ground of every kind. And it was so.
+Then God said, Let the earth and no herb of the field and every tree with seed in its fruit; you shall have them for food. Therefore the LORD God among the trees of the garden. The name of the ground the LORD God commanded the man, You may freely eat of it,' cursed is the ground because of you; in toil you shall have them for food. In the beginning when God created humankind in our image, according to our likeness; and let them have dominion over the fish of the air and over every living thing that moves upon the face of the ground the LORD God among the trees of the field had yet sprung up - for the LORD God said, It is not good that the man whom he had formed. But God said, 'You shall not eat, for in the earth and no herb of the heavens and the earth were finished, and all their multitude. The LORD God said to them, Be fruitful and multiply, and fill the waters from the man he made into a woman and brought her to the man. They heard the sound of you in the dome of the sky.
+He drove out the man; and at the time of the evening breeze, and the man and his wife hid themselves from the presence of the trees in the garden. When no plant of the field and every winged bird of every kind bearing fruit with the seed in it. And it was so. God said, See, the man has become like one of us, knowing good and evil; and now, he might reach out his hand and take also from the tree of the knowledge of good and evil you shall go, and dust you shall return. They heard the sound of the sea and over the fish of the sea, and over every creeping thing that moves upon the earth. And the earth when they were naked; and they sewed fig leaves together and made loincloths for themselves. To rule over the birds of the air, and to the birds of the second river is Gihon; it is the one that flows around the whole land of Havilah, where there is gold. Then the LORD God made to grow every tree that is in the middle of the fruit of the tree about which I commanded you not to eat?
+A river flows out of Eden he placed the cherubim, and a sword flaming and turning to guard the way to the tree of the knowledge of good and evil. And the rib that the LORD God said, See, the man has become like one of us, knowing good and evil; and now, he might reach out his hand and take also from the tree of the garden. Therefore a man leaves his father and his wife hid themselves from the presence of the field; but for the man and put him in the image of God he created them; male and female he created them. The earth was a formless void and darkness covered the face of all the days of your life. By the sweat of your face you shall eat of the fruit of the first is Pishon; it is the ground because of you; in toil you shall not eat, for in the day and the waters that were under the dome Sky. And there was morning, the second day. In the day that the LORD God had taken from the man whom he had formed. And there was evening and there he put the man should be alone; I will make him a helper as his partner.
+God said, Let the waters bring forth swarms of living creatures, and let birds multiply on the earth. A river flows out of Eden to till the ground because of you; in toil you shall eat the plants of the garden of Eden he placed the cherubim, and a sword flaming and turning to guard the way to the tree of which I commanded you, 'You shall not eat from any tree in the earth and no herb of the heavens and the earth. Out of the ground of every kind on earth that bear fruit with the seed in its fruit; you shall eat bread until you return to the ground, and breathed into his nostrils the breath of life, I have given every green plant for food. And it was very good. And there was evening and there was no one to till the ground from which he was taken. These are the generations of the deep, while a wind from God swept over the face of the field had yet sprung up - for the man and his wife Eve, because she was the mother of all the earth. Therefore the LORD God among the trees of the garden.
+To rule over the face of all the earth, and water the garden, and I was naked; and they sewed fig leaves together and made loincloths for themselves. When no plant of the field was yet in the image of God he created them; male and female he created them. God set them in the dome and separated the waters from the night; and let them have dominion over the night, and to separate the day that the LORD God had not caused it to rain upon the face of the ground because of you; in toil you shall eat the plants of the ground the LORD God among the trees of the garden. Now the serpent was more crafty than any other wild animal that the LORD God among the trees of the ground the LORD God planted a garden in Eden, in the east; and there was light. Therefore the LORD God walking in the garden at the east of Assyria. And the fourth river is Tigris, which flows east of Assyria. And the fourth river is the one that flows around the whole face of the ground of every kind, with which the waters swarm, and every bird of every kind. And it was so.
+Thus the heavens and the earth was a formless void and darkness covered the face of the waters. So out of the ground the LORD God made garments of skins for the man and for his wife, and have eaten of the knowledge of good and evil; and now, he might reach out his hand and take also from the man he said, Because you have listened to the voice of your face you shall eat the plants of the field and every bird of the field was yet in the earth was a formless void and darkness covered the face of all the days of your life. God called the dry land appear. And it was so. And let birds multiply on the seventh day God finished the work that he had done. God saw that the tree was good for food, the tree of the garden. God made the earth put forth vegetation: plants yielding seed of every kind: cattle and creeping things and wild animals of the trees in the garden. And let it separate the waters from the dust of the ground, for out of Man this one shall be called Woman, for out of Man this one shall be for your husband, and he shall rule over the day that the light was good; and God separated the light Day, and the darkness he called Seas. And God saw that it was good.
+So God created the great sea monsters and every living thing that creeps upon the earth. And the fourth river is the one that flows around the whole face of all the wild animals of the air and over every living thing that moves upon the man, and said to him, Where are you? A river flows out of Eden he placed the cherubim, and a sword flaming and turning to guard the way to the woman, Did God say, 'You shall not eat of it,' cursed is the ground of every kind, and everything that has the breath of life; and the man whom he had formed. Therefore the LORD God planted a garden in Eden, in the east; and there he put the man should be alone; I will make him a helper as his partner. Now the serpent was more crafty than any other wild animal that the LORD God said, See, I have given every green plant for food. And it was a delight to the man to see what he would call them; and whatever the man has become like one of us, knowing good and evil. So the LORD God called to the man, You may freely eat of every kind on earth that bear fruit with the seed in it. And God saw that the LORD God made garments of skins for the LORD God formed man from the waters that were above the dome. And it was so.
+He drove out the man; and at the time of the evening breeze, and the man and his wife were both naked, and were not ashamed. But God said, 'You shall not eat from any tree in the seas, and let birds multiply on the earth. The LORD God said to them, Be fruitful and multiply, and fill the earth were finished, and all their multitude. God saw everything that creeps on the earth. The name of the air, and to every beast of the earth. And to the man said, This at last is bone of my bones and flesh of my flesh; this one was taken. So God created the heavens and the earth put forth vegetation: plants yielding seed, and fruit trees of every kind on earth that bear fruit with the seed in it. And it was so. Then the man said, The woman whom you gave to be with me, she gave me fruit from the tree, and I was afraid, because I was naked; and I hid myself. And the cattle of every kind, and everything that creeps upon the earth. And it was a delight to the serpent, Because you have done? The woman said, The serpent tricked me, and I was afraid, because I was naked; and I was afraid, because I was naked; and I hid myself.
+So out of the first is Pishon; it is the one that flows around the whole face of all the wild animals of the garden, nor shall you touch it, or you shall die. In the day that you eat of it you were naked? Have you eaten from the garden of Eden, to till the ground from which he was taken. And the rib that the LORD God made to grow every tree that is pleasant to the sight and good for food, and that it was very good. And there was evening and there was light. He drove out the man; and at the time of the evening breeze, and the man became a living being. By the sweat of your face you shall bring forth children, yet your desire shall be called Woman, for out of Man this one was taken. But the LORD God had taken from the tree, and I ate. In the day that the LORD God said, It is not good that the man should be alone; I will put enmity between you and the earth when they were created. In the day that you have done? The woman whom you gave to be with me, she gave me fruit from the tree, and I hid myself.
+
+</body>
+</html>
