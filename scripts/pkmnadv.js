@@ -23,14 +23,18 @@ bgs = [
   "https://play.pokemonshowdown.com/sprites/gen6bgs/bg-orassea.jpg",
   "https://play.pokemonshowdown.com/sprites/gen6bgs/bg-skypillar.jpg"
 ];
-$.get(
-  "/php/pokedex.php",
-  {}, //Build Dictionary
-  function(data, status) {
+/* $.get(
+  "/php/pokedex.php", {}, //Build Dictionary
+  function (data, status) {
     dictparsed = JSON.parse(data);
     dict2 = dictparsed;
   }
-);
+); */
+
+$.getJSON('php/pokedex.json', function (data) {
+  dict2 = data;
+})
+
 /* Calculate Luvenshtein Distance between two words using a very elementay approach.
         Limitations - 
             1. Doesn't work if a.length>b.length as it fails to iterate all the way over b
@@ -61,6 +65,7 @@ function dist(a, b) {
   //alert(cnt);
   return cnt;
 }
+
 function dist2(a, b) {
   //Workarund for the length limitation of dist, point of access for dist
   c = 1;
@@ -77,6 +82,7 @@ function dist2(a, b) {
 
   return d;
 }
+
 function rankgrader2(w) {
   //Aggregate best matches for given w. Also responsible for their formattting
   if (w == "") {
@@ -101,6 +107,7 @@ function rankgrader2(w) {
     if (dict2[j].name.toLowerCase().includes(w.toLowerCase())) {
       //Substring matches, ignore case both ways
       suggadd = dict2[j].name;
+      suggadd = "<span onclick='setentry(this.innerText)' class='filler'>" + suggadd + "</span>"
       suggraw0.push(suggadd);
       if (dict2[j].forms) {
         //Add data & icons if forms exist
@@ -137,6 +144,7 @@ function rankgrader2(w) {
       //Higher confidence term found
       rankmin = rank[j];
       suggadd = dict2[j].name;
+      suggadd = "<span onclick='setentry(this.innerText)' class='filler'>" + suggadd + "</span>"
       suggraw = [];
       suggraw.push(suggadd);
       //document.getElementById("options").innerHTML="<option value=\'"+suggadd+"\'>"
@@ -173,6 +181,7 @@ function rankgrader2(w) {
     } else if (rank[j] == rankmin) {
       //Matching priority trem found
       suggadd = dict2[j].name;
+      suggadd = "<span onclick='setentry(this.innerText)' class='filler'>" + suggadd + "</span>"
       suggraw.push(suggadd);
       //document.getElementById("options").innerHTML+="<option value=\'"+suggadd+"\'>"
       if (dict2[j].forms) {
@@ -210,15 +219,16 @@ function rankgrader2(w) {
     "<b>Matches:</b> " + sugg0 + "<br><b>Suggestions:</b> " + sugg; //Print suggestions
   matches = sugg.split(" ");
   //console.log(suggraw0+"\n"+suggraw)
-  console.log(suggraw);
-  console.log(suggraw0);
+  //console.log(suggraw);
+  //console.log(suggraw0);
   return [suggraw0, suggraw];
 }
+
 function checkforms(pkname) {
   q = 0;
   otherform = [];
   while (q < dict2.length) {
-    if (dict2[q].name.toLowerCase() == pkname.toLowerCase()) {
+    if (dict2[q].name.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "") == pkname.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "")) {
       document.getElementById("entry").setCustomValidity("");
       if (dict2[q].forms) {
         q1 = 0;
@@ -240,7 +250,7 @@ function checkforms(pkname) {
                 document.getElementById("Mega").checked = false;
                 document.getElementById("Primal").checked = false;
                 document.getElementById("Ultra").checked = false;
-                console.log("Can Mega Evolve");
+                //console.log("Can Mega Evolve");
                 break;
               case "primal":
                 document.getElementById("Mega").disabled = true;
@@ -249,7 +259,7 @@ function checkforms(pkname) {
                 document.getElementById("Mega").checked = false;
                 document.getElementById("Primal").checked = false;
                 document.getElementById("Ultra").checked = false;
-                console.log("Can undergo Primal Reversion");
+                //console.log("Can undergo Primal Reversion");
                 break;
               case "ultra":
                 document.getElementById("Mega").disabled = true;
@@ -258,7 +268,7 @@ function checkforms(pkname) {
                 document.getElementById("Mega").checked = false;
                 document.getElementById("Primal").checked = false;
                 document.getElementById("Ultra").checked = false;
-                console.log("Can Ultra Burst");
+                //console.log("Can Ultra Burst");
                 break;
               case "mega-x":
               case "mega-y":
@@ -268,7 +278,7 @@ function checkforms(pkname) {
                 document.getElementById("Mega").checked = false;
                 document.getElementById("Primal").checked = false;
                 document.getElementById("Ultra").checked = false;
-                console.log("Can Mega Evolve");
+                //console.log("Can Mega Evolve");
                 otherform.push(
                   dict2[q].forms[q1].spriteSuffix.split("-")[1].toUpperCase()
                 );
@@ -281,9 +291,9 @@ function checkforms(pkname) {
                 document.getElementById("Primal").checked = false;
                 document.getElementById("Ultra").checked = false;
                 otherform.push(dict2[q].forms[q1].spriteSuffix);
-                console.log(
-                  "Has other form: " + dict2[q].forms[q1].spriteSuffix
-                );
+                //console.log(
+                //  "Has other form: " + dict2[q].forms[q1].spriteSuffix
+                //);
                 break;
             }
           } else {
@@ -294,7 +304,7 @@ function checkforms(pkname) {
             document.getElementById("Primal").checked = false;
             document.getElementById("Ultra").checked = false;
             otherform.push("normal");
-            console.log("Has normal form");
+            //console.log("Has normal form");
           }
           q1 = q1 + 1;
         }
@@ -312,7 +322,7 @@ function checkforms(pkname) {
     q = q + 1;
   }
   q = 0;
-  //console.log("Starting Editing");
+  ////console.log("Starting Editing");
   document.getElementById("Formselect").innerHTML = "";
   while (q < otherform.length) {
     otherform[q] = otherform[q][0].toUpperCase() + otherform[q].substring(1);
@@ -332,8 +342,9 @@ function checkforms(pkname) {
 }
  */
 statsbase = [];
+
 function checkstats(w) {
-  w = w.toLowerCase().replace("-", "");
+  w = w.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "");
   wbs = BattlePokedex[w].baseStats;
   document.getElementById("hp").innerHTML = wbs.hp;
   document.getElementById("atk").innerHTML = wbs.atk;
@@ -361,32 +372,41 @@ function sender() {
   opt = document.getElementsByClassName("transf");
   formval = document.getElementById("Formselect").value;
   //console.log(text);
+  pkname = text;
+  pkform = formval;
   switch (text) {
     case "Jangmo-o":
     case "Hakamo-o":
     case "Kommo-o":
       text = text.split("-")[0] + text.split("-")[1];
+      pkname = text;
       //console.log(text);
       break;
     case "Mr. mime":
       text = "mrmime";
+      pkname = text;
       break;
     case "Mime jr.":
       text = "mimejr";
+      pkname = text;
       break;
     case "Farfetch'd":
       text = "farfetchd";
+      pkname = text;
       break;
   }
   if (opt[0].checked) {
     text += "-Mega";
+    pkform = "mega";
   }
   if (opt[1].checked) {
     text += "-Primal";
+    pkform = "primal"
     //return text;
   }
   if (opt[2].checked) {
     text += "-Ultra";
+    pkform = "ultra";
     //return text;
   }
   switch (formval) {
@@ -419,11 +439,12 @@ function sender() {
       //text+="-"+formval;
       break;
   }
+  //console.log("PK: "+pkname+pkform+" "+text)
   ashwdn = text.toLowerCase();
   if (ashwdn.includes(" ")) {
     ashwdn = ashwdn.split(" ")[0] + ashwdn.split(" ")[1];
   }
-  console.log(ashwdn);
+  //console.log("PkShwdn: "+ashwdn);
   document.getElementById("xyani-front").innerHTML =
     '<img src="https://play.pokemonshowdown.com/sprites/xyani/' +
     ashwdn +
@@ -441,8 +462,10 @@ function sender() {
     ashwdn +
     '.gif" onerror="this.onerror=null;this.src=\'https://play.pokemonshowdown.com/sprites/itemicons/0.png\';">';
   checkstats(text);
+  //pkabl(text);
   return text;
 }
+
 function statcalc() {
   band = document.getElementById("band").checked;
   specs = document.getElementById("specs").checked;
@@ -463,6 +486,9 @@ function statcalc() {
     Math.floor(((2 * hpb + hpiv + Math.floor(hpev / 4)) * hplvl) / 100) +
     hplvl +
     10;
+  if (document.getElementById("entry").value.toLowerCase() == 'shedinja') {
+    hp = 1;
+  }
 
   atkb = document.getElementById("atk").innerHTML * 1;
   atklvl = document.getElementById("atklvl").value * 1;
@@ -473,7 +499,7 @@ function statcalc() {
   atk = Math.floor(
     (Math.floor(((2 * atkb + atkiv + Math.floor(atkev / 4)) * atklvl) / 100) +
       5) *
-      atknat
+    atknat
   );
   if (atkmod > 0) {
     atk = Math.floor(atk * ((2 + Math.abs(atkmod)) / 2));
@@ -499,7 +525,7 @@ function statcalc() {
   def = Math.floor(
     (Math.floor(((2 * defb + defiv + Math.floor(defev / 4)) * deflvl) / 100) +
       5) *
-      defnat
+    defnat
   );
   if (defmod > 0) {
     def = Math.floor(def * ((2 + Math.abs(defmod)) / 2));
@@ -519,7 +545,7 @@ function statcalc() {
   spa = Math.floor(
     (Math.floor(((2 * spab + spaiv + Math.floor(spaev / 4)) * spalvl) / 100) +
       5) *
-      spanat
+    spanat
   );
   if (spamod > 0) {
     spa = Math.floor(spa * ((2 + Math.abs(spamod)) / 2));
@@ -545,7 +571,7 @@ function statcalc() {
   spd = Math.floor(
     (Math.floor(((2 * spdb + spdiv + Math.floor(spdev / 4)) * spdlvl) / 100) +
       5) *
-      spdnat
+    spdnat
   );
   if (spdmod > 0) {
     spd = Math.floor(spd * ((2 + Math.abs(spdmod)) / 2));
@@ -565,7 +591,7 @@ function statcalc() {
   spe = Math.floor(
     (Math.floor(((2 * speb + speiv + Math.floor(speev / 4)) * spelvl) / 100) +
       5) *
-      spenat
+    spenat
   );
   if (spemod > 0) {
     spe = Math.floor(spe * ((2 + Math.abs(spemod)) / 2));
@@ -590,6 +616,7 @@ function statcalc() {
     hpev + atkev + defev + spaev + spdev + speev;
   return [hp, atk, def, spa, spd, spe];
 }
+
 function syncivs() {
   iv = document.getElementById("totiv").value;
   document.getElementById("hpiv").value = iv;
@@ -599,6 +626,7 @@ function syncivs() {
   document.getElementById("spdiv").value = iv;
   document.getElementById("speiv").value = iv;
 }
+
 function synclvls() {
   lvl = document.getElementById("totlvl").value;
   document.getElementById("hplvl").value = lvl;
@@ -608,6 +636,7 @@ function synclvls() {
   document.getElementById("spdlvl").value = lvl;
   document.getElementById("spelvl").value = lvl;
 }
+
 function syncmods() {
   mod = document.getElementById("totmod").value;
   //document.getElementById("hpmod").value=mod
@@ -617,9 +646,10 @@ function syncmods() {
   document.getElementById("spdmod").value = mod;
   document.getElementById("spemod").value = mod;
 }
+
 function filltext(w) {
   document.getElementById("entry").value = w;
-  console.log("Autofill: " + w);
+  //console.log("Autofill: " + w);
   rankgrader2(w);
   checkforms(w);
 }
@@ -632,33 +662,31 @@ function plot(st) {
     type: "radar",
     data: {
       labels: ["Atk", "Def", "Sp Atk", "Sp Def", "Spe"],
-      datasets: [
-        {
-          //label: 'Base Stats',
-          data: [
-            (st.atk / stm) * 100,
-            (st.def / stm) * 100,
-            (st.spa / stm) * 100,
-            (st.spd / stm) * 100,
-            (st.spe / stm) * 100
-          ],
-          backgroundColor: [
-            "rgba(255, 99, 132, 0.2)",
-            "rgba(54, 162, 235, 0.2)",
-            "rgba(255, 206, 86, 0.2)",
-            "rgba(75, 192, 192, 0.2)",
-            "rgba(153, 102, 255, 0.2)"
-          ],
-          borderColor: [
-            "rgba(255, 99, 132, 1)",
-            "rgba(54, 162, 235, 1)",
-            "rgba(255, 206, 86, 1)",
-            "rgba(75, 192, 192, 1)",
-            "rgba(153, 102, 255, 1)"
-          ],
-          borderWidth: 1
-        }
-      ]
+      datasets: [{
+        //label: 'Base Stats',
+        data: [
+          (st.atk / stm) * 100,
+          (st.def / stm) * 100,
+          (st.spa / stm) * 100,
+          (st.spd / stm) * 100,
+          (st.spe / stm) * 100
+        ],
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(255, 206, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(153, 102, 255, 0.2)"
+        ],
+        borderColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)"
+        ],
+        borderWidth: 1
+      }]
     },
     options: {
       scaleLabel: {
@@ -675,25 +703,24 @@ function plot(st) {
           max: 100,
           stepsize: 1
         },
-        yAxes: [
-          {
-            ticks: {
-              display: false,
-              beginAtZero: true,
-              min: 0,
-              max: 100,
-              stepsize: 1,
-              callback: function(value, index, values) {
-                return value;
-              }
+        yAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true,
+            min: 0,
+            max: 100,
+            stepsize: 1,
+            callback: function (value, index, values) {
+              return value;
             }
           }
-        ]
+        }]
       }
     }
   });
   chartobj = myChart;
 }
+
 function starter() {
   document.getElementById("entry").value = "Venusaur";
   rankgrader2("Venusaur");
@@ -701,7 +728,10 @@ function starter() {
   sender();
   statcalc();
   plot(wbs);
+  getsets();
+  pkabl();
 }
+
 function updtr() {
   stm = Math.max(
     statsbase.atk,
@@ -717,51 +747,441 @@ function updtr() {
   chartobj.data.datasets[0].data[4] = (statsbase.spe / stm) * 100;
   chartobj.update();
 }
+
 function randpoke() {
-    document.getElementById("Formselect").innerHTML="";
-    document.getElementById("Mega").disabled=true;
-    document.getElementById("Mega").checked=false;
-    document.getElementById("Primal").disabled=true;
-    document.getElementById("Mega").checked=false;
-    document.getElementById("Ultra").disabled=true;
-    document.getElementById("Mega").checked=false;
-    n=Math.random();
-    n=Math.round(n*dict2.length)
-    pokename=dict2[n].name;
-    pokename=pokename.split(" ")[0];
-    if(pokename=="Type:") {
-        randpoke();
-    }
-    document.getElementById("entry").value=pokename;
-    sender();statcalc();updtr();
-    rankgrader2(pokename);checkforms(pokename)
+  document.getElementById("Formselect").innerHTML = "";
+  document.getElementById("Mega").disabled = true;
+  document.getElementById("Mega").checked = false;
+  document.getElementById("Primal").disabled = true;
+  document.getElementById("Mega").checked = false;
+  document.getElementById("Ultra").disabled = true;
+  document.getElementById("Mega").checked = false;
+  n = Math.random();
+  n = Math.round(n * dict2.length)
+  pokename = dict2[n].name;
+  pokename = pokename.split(" ")[0];
+  /* if (pokename == "Type:") {
+    randpoke();
+  } */
+  document.getElementById("entry").value = pokename;
+  sender();
+  statcalc();
+  updtr();
+  rankgrader2(pokename);
+  checkforms(pokename);
+  pkabl();
+  getsets();
 }
-function checktyping(pkname,pkform) {
-  q=0;
-  types="";
-  while(q<dict2.length) {
-    if(pkname.toLowerCase()==dict2[q].name.toLowerCase()) {
-      j=0;
-      if(dict2[q].forms) {
-        while(j<dict2[q].forms.length) {
-        //console.log(dict2[q].forms[j]);
-        if(dict2[q].forms[j].spriteSuffix) {
-          if(dict2[q].forms[j].spriteSuffix.toLowerCase()==pkform.toLowerCase()) {
-            types=dict2[q].forms[j].types;
-            break;
+
+function checktyping(pkname, pkform) {
+  q = 0;
+  types = "";
+  while (q < dict2.length) {
+    if (removeSpecials(pkname) == removeSpecials(dict2[q].name)) {
+      j = 0;
+      if (dict2[q].forms) {
+        while (j < dict2[q].forms.length) {
+          //console.log(dict2[q].forms[j]);
+          if (dict2[q].forms[j].spriteSuffix) {
+            if (removeSpecials(dict2[q].forms[j].spriteSuffix) == removeSpecials(pkform)) {
+              types = dict2[q].forms[j].types;
+              break;
+            } else {
+              types = dict2[q].types;
+            }
           }
-          else {
-            types=dict2[q].types;
-          }
+          j = j + 1;
         }
-        j=j+1;
+      } else {
+        types = dict2[q].types;
       }
     }
-    else {
-      types=dict2[q].types;
-    }
-    }
-    q=q+1;
+    q = q + 1;
   }
   return types;
+}
+
+function bstbst() { //Beast Boost
+  atk = Number(document.getElementById("atkval").innerText);
+  def = Number(document.getElementById("defval").innerText);
+  spa = Number(document.getElementById("spaval").innerText);
+  spd = Number(document.getElementById("spdval").innerText);
+  spe = Number(document.getElementById("speval").innerText);
+  statval = [atk, def, spa, spd, spe];
+  statname = ['atk', 'def', 'spa', 'spd', 'spe']
+  maxstat = Math.max(atk, def, spa, spd, spe);
+  statname = statname[statval.indexOf(maxstat)];
+  //console.log(statname);
+  statmod = Number(document.getElementById(statname + 'mod').value);
+  //console.log(statmod);
+  statmod = statmod + 1;
+  document.getElementById(statname + 'mod').value = Math.min(statmod, 6);
+}
+
+function intimidate() {
+  statmod = Number(document.getElementById('atkmod').value);
+  //console.log(statmod);
+  statmod = statmod - 1;
+  document.getElementById('atkmod').value = Math.max(statmod, -6);
+}
+
+function pkabl() {
+  // //console.log("Ability of "+a)
+  /*   pkname=a.split('-')[0].toLowerCase();
+    pkform=a.split('-')[1]; */
+  pkname = removeSpecials(document.getElementById("entry").value);
+  pkform = getform();
+  abl = [];
+  abll = [];
+  ablH = [];
+  desc = [];
+  descH = [];
+  typing = [];
+  if (pkform == "normal") {
+    pkform = "";
+  }
+  switch (pkname) {
+    case "burmy":
+    case "floette":
+    case "florges":
+    case "deerling":
+    case "sawsbuck":
+    case "oricorio":
+      if (pkform != "eternal" || pkform == "baile") {
+        pkname = pkname;
+        break;
+      }
+    default:
+      pkname = pkname + pkform;
+  }
+  pkname = pkname.replace("-", "");
+  if (BattlePokedex[pkname]) {
+    abl = BattlePokedex[pkname].abilities;
+    //console.log(BattlePokedex[pkname].abilities);
+  } else {
+    abl = {
+      0: "noability"
+    };
+    //console.log("Pokémon not Found");
+  }
+  //console.log(abl);
+  document.getElementById("abl").innerHTML = "<b>Abilities:</b><br>";
+  abll.push(abl[0]);
+  desc.push(BattleAbilities[abl[0].toLowerCase().replace(" ", "")].shortDesc);
+  document.getElementById("abl").innerHTML += "<b>" + abl[0] + ":</b> " + BattleAbilities[abl[0].toLowerCase().replace(" ", "")].shortDesc;
+  if (abl[1]) {
+    abll.push(abl[1]);
+    desc.push(BattleAbilities[abl[1].toLowerCase().replace(" ", "")].shortDesc);
+    document.getElementById("abl").innerHTML += "<br><b>" + abl[1] + ":</b> " + BattleAbilities[abl[1].toLowerCase().replace(" ", "")].shortDesc;
+  }
+  if (abl['H']) {
+    ablH.push(abl['H'])
+    descH.push(BattleAbilities[abl['H'].toLowerCase().replace(" ", "")].shortDesc);
+    document.getElementById("abl").innerHTML += "<br>(Hidden) <b>" + abl['H'] + ":</b> " + BattleAbilities[abl['H'].toLowerCase().replace(" ", "")].shortDesc;
+  }
+  //console.log(desc);
+  //return [abll,ablH,desc,descH];
+  if (BattlePokedex[pkname]) {
+    typing = BattlePokedex[pkname].types;
+  }
+  /* else {
+    typing=[""];
+  } */
+  document.getElementById('typing').innerHTML = typing[0];
+  if (typing[1]) {
+    document.getElementById('typing').innerHTML += " " + typing[1];
+  }
+  if (BattlePokedex[pkname.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "")].prevo) {
+    txt = BattlePokedex[pkname.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "")].prevo;
+    txt = txt[0].toUpperCase() + txt.substring(1);
+    document.getElementById("preevo").innerHTML = "Evolves from: " + "<span onclick='setentry(this.innerText)' class='filler'>" + BattlePokedex[txt.toLowerCase()].species + "</span>";
+  } else {
+    document.getElementById("preevo").innerHTML = "Has no pre-evolution";
+  }
+  if (BattlePokedex[pkname.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "")].evos) {
+    txt = BattlePokedex[pkname.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "")].evos[0];
+    txt = txt[0].toUpperCase() + txt.substring(1);
+    document.getElementById("evo").innerHTML = "Evolves to: " + "<span onclick='setentry(this.innerText)' class='filler'>" + BattlePokedex[txt.toLowerCase()].species + "</span>";
+    q = 1;
+    while (BattlePokedex[pkname.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "")].evos[q]) {
+      txt = BattlePokedex[pkname.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "")].evos[q];
+      txt = txt[0].toUpperCase() + txt.substring(1);
+      if (!BattlePokedex[txt.toLowerCase()].forme) {
+        document.getElementById("evo").innerHTML += ", " + "<span onclick='setentry(this.innerText)' class='filler'>" + BattlePokedex[txt.toLowerCase()].species + "</span>";
+      }
+      q = q + 1;
+    }
+  } else {
+    document.getElementById("evo").innerHTML = "Has no evolution";
+  }
+}
+
+function getform() {
+  form = "";
+  opt = document.getElementsByClassName("transf");
+  if (opt[0].checked) {
+    form = "mega";
+    if (document.getElementById("Formselect").value != 'Normal') {
+      form += document.getElementById("Formselect").value;
+    }
+  } else if (opt[1].checked) {
+    form = "primal";
+  } else if (opt[2].checked) {
+    form = "ultra";
+  } else {
+    form = document.getElementById("Formselect").value;
+  }
+  return form.toLowerCase();
+}
+
+function setnature() {
+  nat = document.getElementById("nature").value;
+  document.getElementById("atknat").value = '1.0';
+  document.getElementById("defnat").value = '1.0'
+  document.getElementById("spanat").value = '1.0'
+  document.getElementById("spdnat").value = '1.0'
+  document.getElementById("spenat").value = '1.0'
+  switch (NATURES[nat][0]) {
+    case 'at':
+      document.getElementById("atknat").value = '1.1';
+      break;
+    case 'df':
+      document.getElementById("defnat").value = '1.1';
+      break;
+    case 'sa':
+      document.getElementById("spanat").value = '1.1';
+      break;
+    case 'sd':
+      document.getElementById("spdnat").value = '1.1';
+      break;
+    case 'sp':
+      document.getElementById("spenat").value = '1.1';
+      break;
+
+    default:
+
+      break;
+  }
+  switch (NATURES[nat][1]) {
+    case 'at':
+      document.getElementById("atknat").value = '0.9';
+      break;
+    case 'df':
+      document.getElementById("defnat").value = '0.9';
+      break;
+    case 'sa':
+      document.getElementById("spanat").value = '0.9';
+      break;
+    case 'sd':
+      document.getElementById("spdnat").value = '0.9';
+      break;
+    case 'sp':
+      document.getElementById("spenat").value = '0.9';
+      break;
+
+    default:
+
+      break;
+  }
+}
+
+function getnature() {
+  nat = '';
+  z = [document.getElementById('atknat').value, document.getElementById('defnat').value, document.getElementById('spanat').value, document.getElementById('spdnat').value, document.getElementById('spenat').value];
+  znat = ['', 'at', 'df', 'sa', 'sd', 'sp']
+  zpos = z.indexOf('1.1') + 1;
+  zneg = z.indexOf('0.9') + 1;
+  z1 = [znat[zpos], znat[zneg]];
+  //console.log(zpos+' '+zneg);
+  //console.log(z1);
+  for (a in NATURES) {
+    //console.log('Testing '+a);
+    if (NATURES[a][0] == z1[0] && NATURES[a][1] == z1[1]) {
+      //console.log(a);
+      document.getElementById('nature').value = a;
+      break;
+    }
+  }
+  document.getElementById("Hello").inn
+}
+
+function setentry(a) {
+  document.getElementById("entry").value = a;
+
+  rankgrader2(a);
+  checkforms(a)
+  sender();
+  statcalc();
+  updtr();
+  pkabl();
+  getsets();
+}
+
+function getsets() {
+  /* pkname = document.getElementById("entry").value.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", ""); */
+  pkname=removeSpecials(document.getElementById("entry").value);
+  pkform = getform();
+  txt = "";
+  if (pkform == "normal") {
+    pkform = "";
+  }
+  //console.log(pkform);
+  switch (pkname) {
+    case "burmy":
+    case "floette":
+    case "florges":
+    case "deerling":
+    case "sawsbuck":
+    case "oricorio":
+      if (pkform != "eternal" || pkform == "baile") {
+        //console.log("Entered")
+        pkname = pkname;
+        break;
+      }
+    default:
+      pkname = pkname + pkform;
+      break;
+  }
+  console.log(pkname);
+  for (a in SETDEX_SM) {
+    //console.log(a.toLowerCase().replace("-",""));
+    if (removeSpecials(a) == pkname) {
+
+      for (b in SETDEX_SM[a]) {
+        console.log(SETDEX_SM[a][b].moves)
+        txt += "<span class='setdata'>"
+        txt += "<b>" + b + "</b><br>"
+        txt += "<b>Level:</b> " + SETDEX_SM[a][b].level;
+        txt += "<br><b>Item:</b> " + SETDEX_SM[a][b].item;
+        txt += "<br><b>Nature:</b> " + SETDEX_SM[a][b].nature;
+        txt += "<br><b>Ability:</b> " + SETDEX_SM[a][b].ability;
+        txt += "<br><b>Moves:</b><br>" + SETDEX_SM[a][b].moves[0] + "<br>" + SETDEX_SM[a][b].moves[1] + "<br>" + SETDEX_SM[a][b].moves[2] + "<br>" + SETDEX_SM[a][b].moves[3];
+        txt += "<br><input class='importbtn' type='button' value='Import Set' onclick=\'importsets(\" " + a + "\",\"" + b + "\")\'>"
+        console.log("importsets(\'" + a + "\',\'" + b + "\')")
+        //console.log(alert(SETDEX_SM[a][b].level));
+        txt += "</span>"
+      }
+    }
+  }
+  document.getElementById("sets").innerHTML = txt;
+}
+
+function importsets(a1, b1) {
+  console.log(a1 + ' ' + b1);
+  //a=SETDEX_SM[a1][b1];
+  //console.log(a.level);
+  c = null;
+  for (a in SETDEX_SM) {
+    if (removeSpecials(a) == removeSpecials(a1)) {
+      for (b in SETDEX_SM[a]) {
+        if (removeSpecials(b) == removeSpecials(b1)) {
+          c = SETDEX_SM[a][b];
+        }
+      }
+    }
+  }
+  console.log(c.evs);
+  document.getElementById("totlvl").value = c.level;
+  synclvls();
+  document.getElementById("nature").value = c.nature;
+  setnature();
+  document.getElementById("atkev").value = 0;
+  document.getElementById("defev").value = 0;
+  document.getElementById("spaev").value = 0;
+  document.getElementById("spdev").value = 0;
+  document.getElementById("speev").value = 0;
+  document.getElementById("hpev").value = 0;
+
+  document.getElementById("atkiv").value = 31;
+  document.getElementById("defiv").value = 31;
+  document.getElementById("spaiv").value = 31;
+  document.getElementById("spdiv").value = 31;
+  document.getElementById("speiv").value = 31;
+  document.getElementById("hpiv").value = 31;
+
+  if (c.evs.at) {
+    document.getElementById("atkev").value = Number(c.evs.at);
+  }
+  if (c.evs.df) {
+    document.getElementById("defev").value = Number(c.evs.df);
+  }
+  if (c.evs.sa) {
+    document.getElementById("spaev").value = Number(c.evs.sa);
+  }
+  if (c.evs.sd) {
+    document.getElementById("spdev").value = Number(c.evs.sd);
+  }
+  if (c.evs.sp) {
+    document.getElementById("speev").value = Number(c.evs.sp);
+  }
+  if (c.evs.hp) {
+    document.getElementById("hpev").value = Number(c.evs.hp);
+  }
+
+  if (c.ivs) { //console.log(c.ivs);
+
+    if (!isNaN(c.ivs.at)) {
+      //console.log(c.ivs);
+      document.getElementById("atkiv").value = Number(c.ivs.at);
+    }
+    if (!isNaN(c.ivs.df)) {
+      //console.log(c.ivs);
+      document.getElementById("defiv").value = Number(c.ivs.df);
+    }
+    if (!isNaN(c.ivs.sa)) {
+      //console.log(c.ivs);
+      document.getElementById("spaiv").value = Number(c.ivs.sa);
+    }
+    if (!isNaN(c.ivs.sd)) {
+      //console.log(c.ivs);
+      document.getElementById("spdiv").value = Number(c.ivs.sd);
+    }
+    if (!isNaN(c.ivs.sp)) {
+      //console.log(c.ivs);
+      document.getElementById("speiv").value = Number(c.ivs.sp);
+    }
+    if (!isNaN(c.ivs.hp)) {
+      //console.log(c.ivs);
+      document.getElementById("hpiv").value = Number(c.ivs.hp);
+    }
+  }
+
+  statcalc();
+  return c;
+}
+
+function resetstats() {
+  document.getElementById("totlvl").value = 100;
+  synclvls();
+  document.getElementById("nature").value = 'Bashful';
+  setnature();
+  document.getElementById("atkev").value = 0;
+  document.getElementById("defev").value = 0;
+  document.getElementById("spaev").value = 0;
+  document.getElementById("spdev").value = 0;
+  document.getElementById("speev").value = 0;
+  document.getElementById("hpev").value = 0;
+
+  document.getElementById("atkiv").value = 31;
+  document.getElementById("defiv").value = 31;
+  document.getElementById("spaiv").value = 31;
+  document.getElementById("spdiv").value = 31;
+  document.getElementById("speiv").value = 31;
+  document.getElementById("hpiv").value = 31;
+}
+
+function removeSpecials(a, specials = [" ", ":", "-", "."], ignorecase = true) {
+  list = specials;
+  w = a;
+  for (i in list) {
+      //console.log(list[i]);
+      while (w.includes(list[i])) {
+          w = w.replace(list[i], "");
+          //console.log(w);
+      }
+  }
+  if (ignorecase) {
+      return w.toLowerCase();
+  }
+  return w;
 }
