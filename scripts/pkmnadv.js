@@ -23,6 +23,50 @@ bgs = [
   "https://play.pokemonshowdown.com/sprites/gen6bgs/bg-orassea.jpg",
   "https://play.pokemonshowdown.com/sprites/gen6bgs/bg-skypillar.jpg"
 ];
+
+cpmlist={
+  1:0.094,
+  2:0.16639787,
+  3:0.21573247,
+  4:0.25572005,
+  5:0.29024988,
+  6:0.3210876,
+  7:0.34921268,
+  8:0.3752356,
+  9:0.39956728,
+  10:0.4225,
+  11:0.44310755,
+  12:0.4627984,
+  13:0.48168495,
+  14:0.49985844,
+  15:0.51739395,
+  16:0.5343543,
+  17:0.5507927,
+  18:0.5667545,
+  19:0.5822789,
+  20:0.5974,
+  21:0.6121573,
+  22:0.6265671,
+  23:0.64065295,
+  24:0.65443563,
+  25:0.667934,
+  26:0.6811649,
+  27:0.69414365,
+  28:0.7068842,
+  29:0.7193991,
+  30:0.7317,
+  31:0.7377695,
+  32:0.74378943,
+  33:0.74976104,
+  34:0.7556855,
+  35:0.76156384,
+  36:0.76739717,
+  37:0.7731865,
+  38:0.77893275,
+  39:0.784637,
+  40:0.7903
+}
+
 /* $.get(
   "/php/pokedex.php", {}, //Build Dictionary
   function (data, status) {
@@ -369,6 +413,9 @@ function checkstats(w) {
 function sender() {
   text = document.getElementById("entry").value;
   text = text[0].toUpperCase() + text.substring(1);
+
+  document.title=text;
+
   opt = document.getElementsByClassName("transf");
   formval = document.getElementById("Formselect").value;
   //console.log(text);
@@ -612,9 +659,86 @@ function statcalc() {
   document.getElementById("spdval").innerHTML = spd;
   document.getElementById("speval").innerHTML = spe;
 
-  document.getElementById("totev").innerHTML =
-    hpev + atkev + defev + spaev + spdev + speev;
+  document.getElementById("totev").innerHTML = hpev + atkev + defev + spaev + spdev + speev;
+
+  /* -------------------------------------------- */
+  
+  atkivgo=document.getElementById("atkivgo").value;
+  defivgo=document.getElementById("defivgo").value;
+  staivgo=document.getElementById("staivgo").value;
+  stalvlgo=document.getElementById("stalvlgo").value;
+  atklvlgo=document.getElementById("atklvlgo").value;
+  deflvlgo=document.getElementById("deflvlgo").value;
+  cplvlgo=document.getElementById("cplvlgo").value;
+
+  if(atklvlgo%1==0.5) {
+    atkcpm=Math.sqrt((cpmlist[Math.floor(atklvlgo)]**2 + cpmlist[Math.ceil(atklvlgo)]**2)/2);
+  }
+  else {
+    atkcpm=cpmlist[atklvlgo];
+  }
+
+  if(deflvlgo%1==0.5) {
+    defcpm=Math.sqrt((cpmlist[Math.floor(deflvlgo)]**2 + cpmlist[Math.ceil(deflvlgo)]**2)/2);
+  }
+  else {
+    defcpm=cpmlist[deflvlgo];
+  }
+
+  if(stalvlgo%1==0.5) {
+    stacpm=Math.sqrt((cpmlist[Math.floor(stalvlgo)]**2 + cpmlist[Math.ceil(stalvlgo)]**2)/2);
+  }
+  else {
+    stacpm=cpmlist[stalvlgo];
+  }
+
+  if(cplvlgo%1==0.5) {
+    cpcpm=Math.sqrt((cpmlist[Math.floor(cplvlgo)]**2 + cpmlist[Math.ceil(cplvlgo)]**2)/2);
+  }
+  else {
+    cpcpm=cpmlist[cplvlgo];
+  }
+
+  scaatk=Math.round((7*Math.max(atkb,spab)+1*Math.min(atkb,spab))/4);
+  scadef=Math.round((5*Math.max(defb,spdb)+3*Math.min(defb,spdb))/4);
+  scaspe=(1+((speb-75)/500));
+
+  batkgo=Math.round(scaatk*scaspe);
+  bdefgo=Math.round(scadef*scaspe);
+  bstago=Math.floor(1.75*hpb+50);
+
+  atkgo=(batkgo)*atkcpm+(atkivgo)*atkcpm;
+  defgo=(bdefgo)*defcpm+(defivgo)*defcpm;
+  stago=(bstago)*stacpm+(staivgo)*stacpm;
+  /* atkgo=Math.round(atkgo);
+  defgo=Math.round(defgo);
+  stago=Math.round(stago); */
+  cpgo=(atkgo*Math.sqrt(defgo)*Math.sqrt(stago))/10;
+  cpgomax=(((batkgo+15)*atkcpm)*Math.sqrt((bdefgo+15)*defcpm)*Math.sqrt((bstago+15)*stacpm))/10;
+
+  document.getElementById("batkgo").innerHTML=Math.floor(batkgo);
+  document.getElementById("bdefgo").innerHTML=Math.floor(bdefgo);
+  document.getElementById("bstago").innerHTML=Math.floor(bstago);
+
+  document.getElementById("atkbargo").value=batkgo;
+  document.getElementById("defbargo").value=bdefgo;
+  document.getElementById("stabargo").value=bstago;
+  document.getElementById("cpbargo").value=Math.floor(cpgo);
+  document.getElementById("cpbargo").max=Math.floor(cpgomax);
+
+  document.getElementById("atkgo").innerHTML=Math.floor(atkgo);
+  document.getElementById("defgo").innerHTML=Math.floor(defgo);
+  document.getElementById("stago").innerHTML=Math.floor(stago);
+  document.getElementById("cpgo").innerHTML=Math.floor(cpgo);
+
   return [hp, atk, def, spa, spd, spe];
+}
+
+function synclvlsgo() {
+  lvl=document.getElementById("cplvlgo").value;
+  document.getElementById("atklvlgo").value=lvl;
+  document.getElementById("deflvlgo").value=lvl;
+  document.getElementById("stalvlgo").value=lvl;
 }
 
 function syncivs() {
@@ -722,14 +846,22 @@ function plot(st) {
 }
 
 function starter() {
-  document.getElementById("entry").value = "Venusaur";
-  rankgrader2("Venusaur");
-  checkforms("Venusaur");
+  inlineReq=new URLSearchParams(window.location.search);
+  if(inlineReq.has('name')) {
+    specname=inlineReq.get('name');
+  }
+  else {
+    specname="Venusaur";
+  }
+  document.getElementById("entry").value = specname;
+  rankgrader2(specname);
+  checkforms(specname);
   sender();
   statcalc();
   plot(wbs);
   getsets();
   pkabl();
+  learnset();
 }
 
 function updtr() {
@@ -760,9 +892,12 @@ function randpoke() {
   n = Math.round(n * dict2.length)
   pokename = dict2[n].name;
   pokename = pokename.split(" ")[0];
-  /* if (pokename == "Type:") {
-    randpoke();
-  } */
+  if (pokename == "Mr.") {
+    pokename = "Mr. Mime";
+  }
+  if (pokename == "Mime") {
+    pokename = "Mime Jr.";
+  }
   document.getElementById("entry").value = pokename;
   sender();
   statcalc();
@@ -771,6 +906,7 @@ function randpoke() {
   checkforms(pokename);
   pkabl();
   getsets();
+  learnset();
 }
 
 function checktyping(pkname, pkform) {
@@ -867,17 +1003,17 @@ function pkabl() {
   //console.log(abl);
   document.getElementById("abl").innerHTML = "<b>Abilities:</b><br>";
   abll.push(abl[0]);
-  desc.push(BattleAbilities[abl[0].toLowerCase().replace(" ", "")].shortDesc);
-  document.getElementById("abl").innerHTML += "<b>" + abl[0] + ":</b> " + BattleAbilities[abl[0].toLowerCase().replace(" ", "")].shortDesc;
+  desc.push(BattleAbilities[removeSpecials(abl[0])].shortDesc);
+  document.getElementById("abl").innerHTML += "<b>" + abl[0] + ":</b> " + BattleAbilities[removeSpecials(abl[0])].shortDesc;
   if (abl[1]) {
     abll.push(abl[1]);
     desc.push(BattleAbilities[abl[1].toLowerCase().replace(" ", "")].shortDesc);
-    document.getElementById("abl").innerHTML += "<br><b>" + abl[1] + ":</b> " + BattleAbilities[abl[1].toLowerCase().replace(" ", "")].shortDesc;
+    document.getElementById("abl").innerHTML += "<br><b>" + abl[1] + ":</b> " + BattleAbilities[removeSpecials(abl[1])].shortDesc;
   }
   if (abl['H']) {
     ablH.push(abl['H'])
     descH.push(BattleAbilities[abl['H'].toLowerCase().replace(" ", "")].shortDesc);
-    document.getElementById("abl").innerHTML += "<br>(Hidden) <b>" + abl['H'] + ":</b> " + BattleAbilities[abl['H'].toLowerCase().replace(" ", "")].shortDesc;
+    document.getElementById("abl").innerHTML += "<br>(Hidden) <b>" + abl['H'] + ":</b> " + BattleAbilities[removeSpecials(abl['H'])].shortDesc;
   }
   //console.log(desc);
   //return [abll,ablH,desc,descH];
@@ -913,6 +1049,14 @@ function pkabl() {
     }
   } else {
     document.getElementById("evo").innerHTML = "Has no evolution";
+  }
+
+  weaktype=getWeaks(typing);
+  a=null;
+  for(a in weaktype) {
+    if(document.getElementById(a)) {
+      document.getElementById(a).innerHTML=weaktype[a];
+    }
   }
 }
 
@@ -1015,11 +1159,12 @@ function setentry(a) {
   updtr();
   pkabl();
   getsets();
+  learnset();
 }
 
 function getsets() {
   /* pkname = document.getElementById("entry").value.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", ""); */
-  pkname=removeSpecials(document.getElementById("entry").value);
+  pkname = removeSpecials(document.getElementById("entry").value);
   pkform = getform();
   txt = "";
   if (pkform == "normal") {
@@ -1174,14 +1319,128 @@ function removeSpecials(a, specials = [" ", ":", "-", "."], ignorecase = true) {
   list = specials;
   w = a;
   for (i in list) {
-      //console.log(list[i]);
-      while (w.includes(list[i])) {
-          w = w.replace(list[i], "");
-          //console.log(w);
-      }
+    //console.log(list[i]);
+    while (w.includes(list[i])) {
+      w = w.replace(list[i], "");
+      //console.log(w);
+    }
   }
   if (ignorecase) {
-      return w.toLowerCase();
+    return w.toLowerCase();
   }
   return w;
+}
+
+function learnset() {
+  pkname=removeSpecials(document.getElementById("entry").value);
+  set=BattleLearnsets[pkname].learnset;
+  text="<table class='moves'><tr class='moveheader'><th>Name</th><th>Power</th><th>Accuracy</th><th>Category</th><th>Type</th><th>Z Power</th><th>Max PP</th><th>Contest Type</th><th>Description</th></tr></tr>";
+  for(move in BattleMovedex) {
+    console.log(BattleMovedex[move].name);
+    if(removeSpecials(move).includes("hiddenpower")) {
+      text+="<tr>";
+      text+="<td>"+BattleMovedex[move].name+"</td>";
+      if(BattleMovedex["hiddenpower"].basePower!=0)  {text+="<td>"+BattleMovedex["hiddenpower"].basePower+"</td>";} else{text+="<td>-</td>";}
+      if(BattleMovedex["hiddenpower"].accuracy!=true)  {text+="<td>"+BattleMovedex["hiddenpower"].accuracy+"</td>";} else{text+="<td>-</td>";}
+      text+="<td>"+BattleMovedex["hiddenpower"].category+"</td>";
+      text+="<td>"+BattleMovedex["hiddenpower"].type+"</td>";
+      if(BattleMovedex["hiddenpower"].zMovePower)  {text+="<td>"+BattleMovedex["hiddenpower"].zMovePower+"</td>";} else{text+="<td>-</td>";}
+      text+="<td>"+BattleMovedex["hiddenpower"].pp+"</td>";
+      text+="<td>"+BattleMovedex["hiddenpower"].contestType+"</td>";
+      if(BattleMovedex["hiddenpower"].desc)  {text+="<td>"+BattleMovedex["hiddenpower"].desc+"</td>";} else {text+="<td>"+BattleMovedex["hiddenpower"].shortDesc+"</td>";}
+      text+="</tr>"
+      console.log("True");
+    }
+    else if(removeSpecials(move) in set) {
+      text+="<tr>";
+      text+="<td>"+BattleMovedex[move].name+"</td>";
+      if(BattleMovedex[move].basePower!=0)  {text+="<td>"+BattleMovedex[move].basePower+"</td>";} else{text+="<td>-</td>";}
+      if(BattleMovedex[move].accuracy!=true)  {text+="<td>"+BattleMovedex[move].accuracy+"</td>";} else{text+="<td>-</td>";}
+      text+="<td>"+BattleMovedex[move].category+"</td>";
+      text+="<td>"+BattleMovedex[move].type+"</td>";
+      if(BattleMovedex[move].zMovePower)  {text+="<td>"+BattleMovedex[move].zMovePower+"</td>";} else{text+="<td>-</td>";}
+      text+="<td>"+BattleMovedex[move].pp+"</td>";
+      text+="<td>"+BattleMovedex[move].contestType+"</td>";
+      if(BattleMovedex[move].desc)  {text+="<td>"+BattleMovedex[move].desc+"</td>";} else {text+="<td>"+BattleMovedex[move].shortDesc+"</td>";}
+      text+="</tr>"   
+      console.log("True");
+    }
+    //console.log(BattleMovedex[move].name);
+  }
+  text+="</table>";
+  document.getElementById("learnset").innerHTML=text;
+  return set;
+}
+function getWeakTypes(theType,initChart={
+  "Bug": 1,
+  "Dark": 1,
+  "Dragon": 1,
+  "Electric": 1,
+  "Fairy": 1,
+  "Fighting": 1,
+  "Fire": 1,
+  "Flying": 1,
+  "Ghost": 1,
+  "Grass": 1,
+  "Ground": 1,
+  "Ice": 1,
+  "Normal": 1,
+  "Poison": 1,
+  "Psychic": 1,
+  "Rock": 1,
+  "Steel": 1,
+  "Water": 1
+}) {
+  typing=removeSpecials(theType);
+  typing=typing[0].toUpperCase()+typing.substring(1);
+  types=initChart;
+  if(BattleTypeChart[typing]) {
+    for(type in BattleTypeChart[typing].damageTaken) {
+      switch(BattleTypeChart[typing].damageTaken[type].toString()) {
+        case "0":
+          types[type]=types[type]*1;
+          break;
+        case "1":
+          types[type]=types[type]*2;
+          break;
+        case "2":
+          types[type]=types[type]*0.5;
+          break;
+        case "3":
+          types[type]=types[type]*0;
+          break;
+        default:
+          types[type]=-1;
+      }
+    }
+  }
+  return types;
+}
+function getWeaks(Types) {
+  weaks={
+    "Bug": 1,
+    "Dark": 1,
+    "Dragon": 1,
+    "Electric": 1,
+    "Fairy": 1,
+    "Fighting": 1,
+    "Fire": 1,
+    "Flying": 1,
+    "Ghost": 1,
+    "Grass": 1,
+    "Ground": 1,
+    "Ice": 1,
+    "Normal": 1,
+    "Poison": 1,
+    "Psychic": 1,
+    "Rock": 1,
+    "Steel": 1,
+    "Water": 1
+  };
+  w=0;
+  weaks=getWeakTypes(Types[0]);
+  if(Types[1]) {
+    weaks=getWeakTypes(Types[1],weaks);
+  }
+  return weaks;
 }
