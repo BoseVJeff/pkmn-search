@@ -239,7 +239,85 @@
 				"name": "Pikachu",
 				"isNfe": true,
 				"types": ["electric"],
-				"spriteSuffix": "hat"
+				"spriteSuffix": "cosplay"
+			},
+			{
+				"name": "Pikachu",
+				"isNfe": true,
+				"types": ["electric"],
+				"spriteSuffix": "rockstar"
+			},
+			{
+				"name": "Pikachu",
+				"isNfe": true,
+				"types": ["electric"],
+				"spriteSuffix": "belle"
+			},
+			{
+				"name": "Pikachu",
+				"isNfe": true,
+				"types": ["electric"],
+				"spriteSuffix": "popstar"
+			},
+			{
+				"name": "Pikachu",
+				"isNfe": true,
+				"types": ["electric"],
+				"spriteSuffix": "phd"
+			},
+			{
+				"name": "Pikachu",
+				"isNfe": true,
+				"types": ["electric"],
+				"spriteSuffix": "libre"
+			},
+			{
+				"name": "Pikachu",
+				"isNfe": true,
+				"types": ["electric"],
+				"spriteSuffix": "original"
+			},
+			{
+				"name": "Pikachu",
+				"isNfe": true,
+				"types": ["electric"],
+				"spriteSuffix": "hoenn"
+			},
+			{
+				"name": "Pikachu",
+				"isNfe": true,
+				"types": ["electric"],
+				"spriteSuffix": "sinnoh"
+			},
+			{
+				"name": "Pikachu",
+				"isNfe": true,
+				"types": ["electric"],
+				"spriteSuffix": "unova"
+			},
+			{
+				"name": "Pikachu",
+				"isNfe": true,
+				"types": ["electric"],
+				"spriteSuffix": "kalos"
+			},
+			{
+				"name": "Pikachu",
+				"isNfe": true,
+				"types": ["electric"],
+				"spriteSuffix": "alola"
+			},
+			{
+				"name": "Pikachu",
+				"isNfe": true,
+				"types": ["electric"],
+				"spriteSuffix": "partner"
+			},
+			{
+				"name": "Pikachu",
+				"isNfe": true,
+				"types": ["electric"],
+				"spriteSuffix": "starter"
 			}
 		]
 	},
@@ -296,7 +374,7 @@
 	},
 	{
 		"id": 29,
-		"name": "Nidoran ♀",
+		"name": "Nidoran-F",
 		"isNfe": true,
 		"types": ["poison"]
 	},
@@ -313,7 +391,7 @@
 	},
 	{
 		"id": 32,
-		"name": "Nidoran ♂",
+		"name": "Nidoran-M",
 		"isNfe": true,
 		"types": ["poison"]
 	},
@@ -4310,7 +4388,18 @@
 	{
 		"id": 555,
 		"name": "Darmanitan",
-		"types": ["fire"]
+		"types": ["fire"],
+		"forms": [
+			{
+				"name": "Darmanitan",
+				"types": ["fire"]
+			},
+			{
+				"name": "Darmanitan Zen",
+				"types": ["fire","psychic"],
+				"spriteSuffix": "zen"
+			}
+		]
 	},
 	{
 		"id": 556,
@@ -5366,7 +5455,58 @@
 	{
 		"id": 676,
 		"name": "Furfrou",
-		"types": ["normal"]
+		"types": ["normal"],
+		"forms": [
+			{
+				"name": "Furfrou",
+				"types": ["normal"]
+			},
+			{
+				"name": "Furfrou Heart",
+				"types": ["normal"],
+				"spriteSuffix": "heart"
+			},
+			{
+				"name": "Furfrou Star",
+				"types": ["normal"],
+				"spriteSuffix": "star"
+			},
+			{
+				"name": "Furfrou Diamond",
+				"types": ["normal"],
+				"spriteSuffix": "diamond"
+			},
+			{
+				"name": "Furfrou Debutante",
+				"types": ["normal"],
+				"spriteSuffix": "debutante"
+			},
+			{
+				"name": "Furfrou Matron",
+				"types": ["normal"],
+				"spriteSuffix": "matron"
+			},
+			{
+				"name": "Furfrou Dandy",
+				"types": ["normal"],
+				"spriteSuffix": "dandy"
+			},
+			{
+				"name": "Furfrou la Reine",
+				"types": ["normal"],
+				"spriteSuffix": "lareine"
+			},
+			{
+				"name": "Furfrou Kabuki",
+				"types": ["normal"],
+				"spriteSuffix": "kabuki"
+			},
+			{
+				"name": "Furfrou Pharaoh",
+				"types": ["normal"],
+				"spriteSuffix": "pharaoh"
+			}
+		]
 	},
 	{
 		"id": 677,
@@ -5582,6 +5722,11 @@
 			{
 				"name": "Pumpkaboo",
 				"isNfe": true,
+				"types": ["ghost", "grass"]
+			},
+			{
+				"name": "Pumpkaboo",
+				"isNfe": true,
 				"types": ["ghost", "grass"],
 				"spriteSuffix": "super"
 			},
@@ -5604,6 +5749,10 @@
 		"name": "Gourgeist",
 		"types": ["ghost", "grass"],
 		"forms": [
+			{
+				"name": "Gourgeist",
+				"types": ["ghost", "grass"]
+			},
 			{
 				"name": "Gourgeist",
 				"types": ["ghost", "grass"],
@@ -6215,7 +6364,7 @@
 				"name": "Mimikyu",
 				"types": ["ghost", "fairy"],
 				"spriteSuffix": "normal"
-			}
+			},
 			{
 				"name": "Mimikyu",
 				"types": ["ghost", "fairy"],
