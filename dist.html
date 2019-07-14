@@ -23,22 +23,21 @@
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.css" /> -->
     <link rel="stylesheet" href="css/Chart.css" />
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="fontawesome/css/all.css">
 
 </head>
 
 <body onload="starter();">
-
+    <!-- <div class="flotactbtn fa fas fa-search"></div> -->
     <div class="req">
-        <input type="button" onclick="sender();statcalc();updtr();pkabl();getsets();learnset();" value="Get Data"
-            class="buttons" id="getdata" class="btns">
+        <!-- <input type="button" onclick="sender();statcalc();updtr();pkabl();getsets();learnset();" value="Get Data" class="buttons" id="getdata" class="btns"> -->
         <span id="input">
-            <input type="text" oninput="rankgrader2(this.value);checkforms(this.value)" list="options" id="entry"
-                placeholder="Pokemon Name" autocomplete="off"><!--  pattern="^((?!-[m,M]ega).)*$"> -->
+            <input type="button" onclick="sender();statcalc();updtr();pkabl();getsets();learnset();" value="Get Data" class="buttons" id="getdata" class="btns"><span class="fa fas fa-search buttons"></span><input type="text" oninput="rankgrader2(this.value);checkforms(this.value)" list="options" id="entry" placeholder="Pokemon Name" autocomplete="off"><span class="fa fas fa-dice buttons"></span><input type="button" onclick="randpoke();" value="Random Pokémon" id='randdata' class="btns"><!--  pattern="^((?!-[m,M]ega).)*$"> -->
             <datalist id="options">
 
             </datalist>
         </span>
-        <input type="button" onclick="randpoke();" value="Random Pokémon" id='randdata' class="btns">
+        <!-- <input type="button" onclick="randpoke();" value="Random Pokémon" id='randdata' class="btns"> -->
 
         <span id="forms">
 
@@ -46,12 +45,9 @@
             <select id="Formselect">
 
             </select>
-            <input type="checkbox" value="Mega" class="transf" id="Mega" disabled><label for="Mega">Mega
-                Evolution</label>
-            <input type="checkbox" value="Mega" class="transf" id="Primal" disabled><label for="Primal">Primal
-                Reversion</label>
-            <input type="checkbox" value="Mega" class="transf" id="Ultra" disabled><label for="Ultra">Ultra
-                Burst</label>
+            <input type="checkbox" value="Mega" class="transf" id="Mega" disabled><label for="Mega">Mega Evolution</label>
+            <input type="checkbox" value="Mega" class="transf" id="Primal" disabled><label for="Primal">Primal Reversion</label>
+            <input type="checkbox" value="Mega" class="transf" id="Ultra" disabled><label for="Ultra">Ultra Burst</label>
 
 
         </span>
@@ -80,13 +76,13 @@
 
             <!-- <hr> -->
         </span>
-        <div id="suggestiontext"></div>
+        <div id="suggestiontext" onmouseout="//document.getElementById('suggestiontext').scrollLeft=0;"></div>
 
         <!-- <hr> -->
         <!-- <input type="button" onclick="document.getElementById('entry').value=dict2[Math.round(Math.random()*dict2.length)].name;rankgrader2(dict2[Math.round(Math.random()*dict2.length)].name);checkforms(dict2[Math.round(Math.random()*dict2.length)].name);sender();" value="Send Random">
         <br> -->
     </div>
-
+    <div class="scrollbox">
     <table id="stats">
         <tr class="headers">
             <td></td>
@@ -113,7 +109,7 @@
             <td></td>
             <td id="hpval" class="netstats" onchange="statcalc()"></td>
             <td rowspan="8">
-                <div style="width: 20vw; height: 20vw">
+                <div >
                     <canvas id="myChart" width="100" height="100"></canvas>
                 </div>
             </td>
@@ -291,6 +287,8 @@
             <td><span id="cpgo"></span></td>
         </tr>
     </table>
+</div>
+
     <br>
     <b>Sprites:</b><br>
     <table id="sprites">
@@ -312,7 +310,7 @@
     <div id="typing"></div>
     <b>Weaknesses:</b>
 
-
+    <div class="scrollbox">
     <table class="typechart">
         <tr>
             <th>Bug</th>
@@ -389,6 +387,7 @@
             </td>
         </tr>
     </table>
+    </div>
 
     <div id='abl'></div>
 
@@ -402,7 +401,16 @@
     <b>Sets:</b><br>
     <div id="sets"></div>
     <b>Learnset:</b>
-    <div id="learnset"></div>
+    <div id="learnset" class=""></div>
+    <!-- <svg height="110" width="110">
+        <defs>
+            <filter id="f1" x="0" y="0">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="15" />
+            </filter>
+        </defs>
+        <rect width="90" height="90" stroke="green" stroke-width="3" fill="rgba(0,0,0,0)" filter="url(#f1)" />
+        Not Supported
+    </svg> -->
 </body>
 
 </html>
