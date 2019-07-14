@@ -388,7 +388,9 @@ function checkforms(pkname) {
 statsbase = [];
 
 function checkstats(w) {
-  w = w.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "");
+  /* w = w.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", ""); */
+  w=remspecs(w);
+  console.log("I'M HEREEEEEEE - "+w)
   wbs = BattlePokedex[w].baseStats;
   document.getElementById("hp").innerHTML = wbs.hp;
   document.getElementById("atk").innerHTML = wbs.atk;
@@ -492,6 +494,7 @@ function sender() {
     ashwdn = ashwdn.split(" ")[0] + ashwdn.split(" ")[1];
   }
   //console.log("PkShwdn: "+ashwdn);
+
   document.getElementById("xyani-front").innerHTML =
     '<img src="https://play.pokemonshowdown.com/sprites/xyani/' +
     ashwdn +
@@ -507,7 +510,8 @@ function sender() {
   document.getElementById("xyani-back-shiny").innerHTML =
     '<img src="https://play.pokemonshowdown.com/sprites/xyani-back-shiny/' +
     ashwdn +
-    '.gif" onerror="this.onerror=null;this.src=\'https://play.pokemonshowdown.com/sprites/itemicons/0.png\';">';
+    '.gif" onerror="this.onerror=null;this.src=\'https://play.pokemonshowdown.com/sprites/itemicons/0.png\';" onerror="fixbroken("xyani-back-shiny")>';
+  
   checkstats(text);
   //pkabl(text);
   return text;
@@ -913,13 +917,13 @@ function checktyping(pkname, pkform) {
   q = 0;
   types = "";
   while (q < dict2.length) {
-    if (removeSpecials(pkname) == removeSpecials(dict2[q].name)) {
+    if (remspecs(pkname) == remspecs(dict2[q].name)) {
       j = 0;
       if (dict2[q].forms) {
         while (j < dict2[q].forms.length) {
           //console.log(dict2[q].forms[j]);
           if (dict2[q].forms[j].spriteSuffix) {
-            if (removeSpecials(dict2[q].forms[j].spriteSuffix) == removeSpecials(pkform)) {
+            if (remspecs(dict2[q].forms[j].spriteSuffix) == remspecs(pkform)) {
               types = dict2[q].forms[j].types;
               break;
             } else {
@@ -965,7 +969,7 @@ function pkabl() {
   // //console.log("Ability of "+a)
   /*   pkname=a.split('-')[0].toLowerCase();
     pkform=a.split('-')[1]; */
-  pkname = removeSpecials(document.getElementById("entry").value);
+  pkname = remspecs(document.getElementById("entry").value);
   pkform = getform();
   abl = [];
   abll = [];
@@ -1003,17 +1007,17 @@ function pkabl() {
   //console.log(abl);
   document.getElementById("abl").innerHTML = "<b>Abilities:</b><br>";
   abll.push(abl[0]);
-  desc.push(BattleAbilities[removeSpecials(abl[0])].shortDesc);
-  document.getElementById("abl").innerHTML += "<b>" + abl[0] + ":</b> " + BattleAbilities[removeSpecials(abl[0])].shortDesc;
+  desc.push(BattleAbilities[remspecs(abl[0])].shortDesc);
+  document.getElementById("abl").innerHTML += "<b>" + abl[0] + ":</b> " + BattleAbilities[remspecs(abl[0])].shortDesc;
   if (abl[1]) {
     abll.push(abl[1]);
     desc.push(BattleAbilities[abl[1].toLowerCase().replace(" ", "")].shortDesc);
-    document.getElementById("abl").innerHTML += "<br><b>" + abl[1] + ":</b> " + BattleAbilities[removeSpecials(abl[1])].shortDesc;
+    document.getElementById("abl").innerHTML += "<br><b>" + abl[1] + ":</b> " + BattleAbilities[remspecs(abl[1])].shortDesc;
   }
   if (abl['H']) {
     ablH.push(abl['H'])
     descH.push(BattleAbilities[abl['H'].toLowerCase().replace(" ", "")].shortDesc);
-    document.getElementById("abl").innerHTML += "<br>(Hidden) <b>" + abl['H'] + ":</b> " + BattleAbilities[removeSpecials(abl['H'])].shortDesc;
+    document.getElementById("abl").innerHTML += "<br>(Hidden) <b>" + abl['H'] + ":</b> " + BattleAbilities[remspecs(abl['H'])].shortDesc;
   }
   //console.log(desc);
   //return [abll,ablH,desc,descH];
@@ -1030,14 +1034,14 @@ function pkabl() {
   if (BattlePokedex[pkname.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "")].prevo) {
     txt = BattlePokedex[pkname.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "")].prevo;
     txt = txt[0].toUpperCase() + txt.substring(1);
-    document.getElementById("preevo").innerHTML = "Evolves from: " + "<span onclick='setentry(this.innerText)' class='filler'>" + BattlePokedex[txt.toLowerCase()].species + "</span>";
+    document.getElementById("preevo").innerHTML = "Evolves from: ".bold() + "<span onclick='setentry(this.innerText)' class='filler'>" + BattlePokedex[txt.toLowerCase()].species + "</span>";
   } else {
     document.getElementById("preevo").innerHTML = "Has no pre-evolution";
   }
   if (BattlePokedex[pkname.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "")].evos) {
     txt = BattlePokedex[pkname.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "")].evos[0];
     txt = txt[0].toUpperCase() + txt.substring(1);
-    document.getElementById("evo").innerHTML = "Evolves to: " + "<span onclick='setentry(this.innerText)' class='filler'>" + BattlePokedex[txt.toLowerCase()].species + "</span>";
+    document.getElementById("evo").innerHTML = "Evolves to: ".bold() + "<span onclick='setentry(this.innerText)' class='filler'>" + BattlePokedex[txt.toLowerCase()].species + "</span>";
     q = 1;
     while (BattlePokedex[pkname.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "")].evos[q]) {
       txt = BattlePokedex[pkname.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", "")].evos[q];
@@ -1164,7 +1168,7 @@ function setentry(a) {
 
 function getsets() {
   /* pkname = document.getElementById("entry").value.toLowerCase().replace("-", "").replace("-", "").replace(" ", "").replace(":", "").replace(".", ""); */
-  pkname = removeSpecials(document.getElementById("entry").value);
+  pkname = remspecs(document.getElementById("entry").value);
   pkform = getform();
   txt = "";
   if (pkform == "normal") {
@@ -1190,7 +1194,7 @@ function getsets() {
   console.log(pkname);
   for (a in SETDEX_SM) {
     //console.log(a.toLowerCase().replace("-",""));
-    if (removeSpecials(a) == pkname) {
+    if (remspecs(a) == pkname) {
 
       for (b in SETDEX_SM[a]) {
         console.log(SETDEX_SM[a][b].moves)
@@ -1217,9 +1221,9 @@ function importsets(a1, b1) {
   //console.log(a.level);
   c = null;
   for (a in SETDEX_SM) {
-    if (removeSpecials(a) == removeSpecials(a1)) {
+    if (remspecs(a) == remspecs(a1)) {
       for (b in SETDEX_SM[a]) {
-        if (removeSpecials(b) == removeSpecials(b1)) {
+        if (remspecs(b) == remspecs(b1)) {
           c = SETDEX_SM[a][b];
         }
       }
@@ -1315,9 +1319,14 @@ function resetstats() {
   document.getElementById("hpiv").value = 31;
 }
 
-function removeSpecials(a, specials = [" ", ":", "-", "."], ignorecase = true) {
+/* function removeSpecials(a, specials = [" ", ":", "-", ".","'"], ignorecase = true) {
+  w=removeSpecial(a);
+  return w.normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+} */
+
+/* function removeSpecials(a, specials = [" ", ":", "-", "."], ignorecase = true) {
   list = specials;
-  w = a;
+  w = af(a);
   for (i in list) {
     //console.log(list[i]);
     while (w.includes(list[i])) {
@@ -1326,18 +1335,38 @@ function removeSpecials(a, specials = [" ", ":", "-", "."], ignorecase = true) {
     }
   }
   if (ignorecase) {
+    return w.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  }
+  return w;
+} */
+
+function remspecs(a,specs=[" ", ":", "-", "."],igcase=true) {
+  let w=a.normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  let i=0;
+  for(i in specs) {
+    while(w.includes(specs[i])) {
+      w=w.replace(specs[i],"");
+    }
+  }
+  if(igcase) {
     return w.toLowerCase();
   }
   return w;
 }
 
+/* function removeSpecials(text,specials=[" ",":","-",".","'"],ignorecase=true) {
+  let list=specials;
+  let w1=text.normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  return w1;
+} */
+
 function learnset() {
-  pkname=removeSpecials(document.getElementById("entry").value);
+  pkname=remspecs(document.getElementById("entry").value);
   set=BattleLearnsets[pkname].learnset;
-  text="<table class='moves'><tr class='moveheader'><th>Name</th><th>Power</th><th>Accuracy</th><th>Category</th><th>Type</th><th>Z Power</th><th>Max PP</th><th>Contest Type</th><th>Description</th></tr></tr>";
+  text="<div><table class='moves'><tr class='moveheader'><th>Name</th><th>Power</th><th>Accuracy</th><th>Category</th><th>Type</th><th>Z Power</th><th>Max PP</th><th>Contest Type</th><th>Description</th></tr></tr>";
   for(move in BattleMovedex) {
     console.log(BattleMovedex[move].name);
-    if(removeSpecials(move).includes("hiddenpower")) {
+    if(remspecs(move).includes("hiddenpower")) {
       text+="<tr>";
       text+="<td>"+BattleMovedex[move].name+"</td>";
       if(BattleMovedex["hiddenpower"].basePower!=0)  {text+="<td>"+BattleMovedex["hiddenpower"].basePower+"</td>";} else{text+="<td>-</td>";}
@@ -1351,7 +1380,7 @@ function learnset() {
       text+="</tr>"
       console.log("True");
     }
-    else if(removeSpecials(move) in set) {
+    else if(remspecs(move) in set) {
       text+="<tr>";
       text+="<td>"+BattleMovedex[move].name+"</td>";
       if(BattleMovedex[move].basePower!=0)  {text+="<td>"+BattleMovedex[move].basePower+"</td>";} else{text+="<td>-</td>";}
@@ -1367,7 +1396,7 @@ function learnset() {
     }
     //console.log(BattleMovedex[move].name);
   }
-  text+="</table>";
+  text+="</table></div>";
   document.getElementById("learnset").innerHTML=text;
   return set;
 }
@@ -1391,7 +1420,7 @@ function getWeakTypes(theType,initChart={
   "Steel": 1,
   "Water": 1
 }) {
-  typing=removeSpecials(theType);
+  typing=remspecs(theType);
   typing=typing[0].toUpperCase()+typing.substring(1);
   types=initChart;
   if(BattleTypeChart[typing]) {
@@ -1443,4 +1472,27 @@ function getWeaks(Types) {
     weaks=getWeakTypes(Types[1],weaks);
   }
   return weaks;
+}
+
+function fixbroken(a) {
+  document.getElementById(a).innerHTML='<div class="loader"></div>';
+}
+
+function foulplaydmg(roll=100) {
+  l=document.getElementById("totlvl").value;
+  a=parseInt(document.getElementById("atkval").innerHTML);
+  bp=95;
+  d=parseInt(document.getElementById("defval").innerHTML);
+  weak=parseFloat(document.getElementById("Dark").innerHTML);
+  typing=document.getElementById("typing").innerHTML.split(" ");
+  stab=1;
+  /* for(type in typing) {
+    if(typing[type]=="Dark") {
+      stab=1.5;
+      break;
+    }
+  } */
+  /* roll=100; */
+  dmg=((((0.4*l+2)*a*bp)/(d*50))+2)*stab*weak*(roll/100);
+  return dmg;
 }
